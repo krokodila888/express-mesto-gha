@@ -20,9 +20,9 @@ Card.findByIdAndRemove(req.params.id)
   .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
-module.exports.createCard = (req, res) => {
-  console.log(req.user._id); // _id станет доступен
-};
+//module.exports.createCard = (req, res) => {
+//  console.log(req.user._id); // _id станет доступен
+//};
 
 module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   req.params.cardId,
@@ -30,21 +30,13 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
 
-module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
+module.exports.deleteLike = (req, res) => Card.findByIdAndUpdate(
   req.params.cardId,
   { $pull: { likes: req.user._id } }, // убрать _id из массива
   { new: true },
   )
 
-  const { getCards, createCard, deleteCard, likeCard, deleteLike } = require('../controllers/users');
 
-  router.get('/', getCards);
-  router.post('/', createCard);
-  router.delete('/:cardId', deleteCard);
-  router.put('/:cardId/likes', likeCard);
-  router.delete('/:cardId/likes', deleteLike);
-
-  module.exports = cardsRouter;
 
 
 //POST /cards — создаёт карточку с переданными в теле запроса name и link , устанавливает поле owner для
