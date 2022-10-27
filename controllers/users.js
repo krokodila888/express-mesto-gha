@@ -24,12 +24,15 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   User.findById(req.user._id)
-    .orFail(() => {return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR })})
+    //.orFail(() => {return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR })})
     .then((user) => {if (!user) {return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR })}
       res.send({ data: user })})
     .catch((err) => {
       if (err.message === 'NotFound') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
+      }
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_POST_ERROR });
       }
       if (res.status(ERROR_CODE_NOT_FOUND)) {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
