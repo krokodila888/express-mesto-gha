@@ -24,9 +24,9 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.USER_POST_ERROR });
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_POST_ERROR });
       }
-    return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG })})
+    return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG })})
 };
 
 module.exports.editUserProfile = (req, res) => {
