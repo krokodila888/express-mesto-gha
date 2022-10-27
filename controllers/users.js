@@ -7,21 +7,6 @@ module.exports.getUsers = (req, res) => {
     .catch(() => res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG }));
 };
 
-/*module.exports.getUser = (req, res) => {
-  User.findById(req.user._id)
-    .orFail((err) => {return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR })})
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if(err.message === 'NotFound') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
-      }
-      if (res.status(ERROR_CODE_NOT_FOUND)) {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
-      }
-      return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
-    });
-};*/
-
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .orFail(() => {return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR })})
