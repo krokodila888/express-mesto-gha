@@ -28,10 +28,13 @@ module.exports.getUser = (req, res) => {
     .then((user) => {if (!user) {return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR })}
       res.send({ data: user })})
     .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
+      }
       if(err.message === 'NotFound') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
       }
-      return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: err.message, name: err.name });
+      return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
 };
 
