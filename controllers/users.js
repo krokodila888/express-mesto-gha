@@ -11,6 +11,9 @@ module.exports.getUser = (req, res) => {
   User.findById(req.user._id)
     .then((user) => res.send({ data: user }))
     .catch((err) => {
+      if(err.message === 'NotFound') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
+      }
       if (res.status(ERROR_CODE_NOT_FOUND)) {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
       }
@@ -31,9 +34,12 @@ module.exports.createUser = (req, res) => {
 
 module.exports.editUserProfile = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_PATCH_PROFILE_INVALID_DATA_ERROR });
+      }
       if (res.status(ERROR_CODE_WRONG_DATA)) {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_PATCH_PROFILE_INVALID_DATA_ERROR });
       }
@@ -46,9 +52,12 @@ module.exports.editUserProfile = (req, res) => {
 
 module.exports.editUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_PATCH_AVATAR_INVALID_DATA_ERROR });
+      }
       if (res.status(ERROR_CODE_WRONG_DATA)) {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_PATCH_AVATAR_INVALID_DATA_ERROR });
       }

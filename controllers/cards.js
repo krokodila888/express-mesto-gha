@@ -13,7 +13,6 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then(cards => res.send({ data: cards }))
     .catch((err) => {
-      //console.log(err.message)
       if (res.status(ERROR_CODE_WRONG_DATA)) {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_POST_ERROR });
       }
@@ -39,6 +38,9 @@ module.exports.likeCard = (req, res) =>
     { new: true })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
+      if(err.message === 'NotFound') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_LIKE_ID_NOT_FOUND_ERROR });
+      }
       if (res.status(ERROR_CODE_WRONG_DATA)) {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR });
       }
@@ -55,6 +57,9 @@ module.exports.deleteLike = (req, res) =>
     { new: true })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
+      if(err.message === 'NotFound') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_LIKE_ID_NOT_FOUND_ERROR });
+      }
       if (res.status(ERROR_CODE_WRONG_DATA)) {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR });
       }
