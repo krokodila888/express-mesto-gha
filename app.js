@@ -8,7 +8,6 @@ const cardsRouter = require('./routes/cards');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
 mongoose.connect('mongodb://localhost:27017/mestodb',
   err => {
       if(err) throw err;
@@ -24,6 +23,9 @@ app.use((req, res, next) => {
 
 app.use(usersRouter);
 app.use(cardsRouter);
+app.use('*', (req, res) => {
+  res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
+});
 
 app.listen(PORT, () => {
   console.log(`App listen to ${PORT} port`);

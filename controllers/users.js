@@ -9,6 +9,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   User.findById(req.user._id)
+    .orFail((err) => {return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR })})
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if(err.message === 'NotFound') {
