@@ -39,15 +39,14 @@ module.exports.likeCard = (req, res) =>
     { new: true })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      console.log(err.message)
-      /*if (res.status(ERROR_CODE_WRONG_DATA)) {
+      if (res.status(ERROR_CODE_WRONG_DATA)) {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR });
       }
       if (res.status(ERROR_CODE_NOT_FOUND)) {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_DELETE_LIKE_ID_NOT_FOUND_ERROR });
       }
       return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
-    */});
+    });
 
 module.exports.deleteLike = (req, res) =>
   Card.findByIdAndUpdate(
