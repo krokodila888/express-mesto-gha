@@ -22,6 +22,7 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail(() => {return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_NOT_FOUND_ERROR })})
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if(err.message === 'NotFound') {
@@ -39,6 +40,7 @@ module.exports.likeCard = (req, res) =>
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true })
+    .orFail(() => {return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR })})
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if(err.message === 'NotFound') {
@@ -58,6 +60,7 @@ module.exports.deleteLike = (req, res) =>
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true })
+    .orFail(() => {return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR })})
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if(err.message === 'NotFound') {

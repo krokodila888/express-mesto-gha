@@ -29,7 +29,7 @@ module.exports.getUser = (req, res) => {
       res.send({ data: user })})
     .catch((err) => {
       if(err.message === 'NotFound') {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
       }
       return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: err.message, name: err.name });
     });
