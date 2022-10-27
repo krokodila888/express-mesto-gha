@@ -7,6 +7,7 @@ const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+const { ERROR_CODE_NOT_FOUND, ERROR_MESSAGE } = require('./utils/utils.js');
 
 mongoose.connect('mongodb://localhost:27017/mestodb',
   err => {
