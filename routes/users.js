@@ -5,8 +5,8 @@ const { getUsers, getUser, createUser, editUserProfile, editUserAvatar } = requi
 usersRouter.get('/users', getUsers);
 usersRouter.get('/users/:userId', getUser);
 usersRouter.post('/users', createUser);
-usersRouter.patch('/me', editUserProfile);
-usersRouter.patch('/me/avatar', editUserAvatar);
+usersRouter.patch('/users/me', editUserProfile);
+usersRouter.patch('/users/me/avatar', editUserAvatar);
 
 module.exports = usersRouter;
 
