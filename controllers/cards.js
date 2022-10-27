@@ -13,6 +13,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then(cards => res.send({ data: cards }))
     .catch((err) => {
+      //console.log(err.message)
       if (res.status(ERROR_CODE_WRONG_DATA)) {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_POST_ERROR });
       }
@@ -21,7 +22,7 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findByIdAndRemove(req.params.CardId)
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (res.status(ERROR_CODE_NOT_FOUND)) {
@@ -31,24 +32,24 @@ module.exports.deleteCard = (req, res) => {
     });
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res) =>
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (res.status(ERROR_CODE_WRONG_DATA)) {
+      console.log(err.message)
+      /*if (res.status(ERROR_CODE_WRONG_DATA)) {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR });
       }
       if (res.status(ERROR_CODE_NOT_FOUND)) {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_DELETE_LIKE_ID_NOT_FOUND_ERROR });
       }
       return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
-    });
-}
+    */});
 
-module.exports.deleteLike = (req, res) => {
+module.exports.deleteLike = (req, res) =>
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -63,4 +64,3 @@ module.exports.deleteLike = (req, res) => {
       }
       return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
-}

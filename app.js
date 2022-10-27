@@ -8,11 +8,6 @@ const cardsRouter = require('./routes/cards');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-/*mongoose.connect('mongodb://localhost:27017/mestodb', {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false
-});*/
 
 mongoose.connect('mongodb://localhost:27017/mestodb',
   err => {
@@ -33,4 +28,3 @@ app.use(cardsRouter);
 app.listen(PORT, () => {
   console.log(`App listen to ${PORT} port`);
 });
-
