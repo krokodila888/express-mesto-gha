@@ -13,7 +13,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then(cards => res.send({ data: cards }))
     .catch((err) => {
-      if (res.status(ERROR_CODE_WRONG_DATA)) {
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_POST_ERROR });
       }
       return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
@@ -22,14 +22,19 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(() => {return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_NOT_FOUND_ERROR })})
+    .orFail(() => {
+      throw new Error('NotFound');
+      })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if(err.message === 'NotFound') {
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_NOT_FOUND_ERROR });
+      }
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_NOT_FOUND_ERROR });
       }
-      if (res.status(ERROR_CODE_WRONG_DATA)) {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_NOT_FOUND_ERROR });
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_INCORRECT });
       }
       return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
@@ -40,17 +45,19 @@ module.exports.likeCard = (req, res) =>
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true })
-    .orFail(() => {return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR })})
+    .orFail(() => {
+      throw new Error('NotFound');
+      })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if(err.message === 'NotFound') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR });
-      }
-      if (res.status(ERROR_CODE_WRONG_DATA)) {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR });
-      }
-      if (res.status(ERROR_CODE_NOT_FOUND)) {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR });
+      }
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR });
+      }
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_INCORRECT });
       }
       return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
@@ -60,17 +67,19 @@ module.exports.deleteLike = (req, res) =>
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true })
-    .orFail(() => {return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR })})
+    .orFail(() => {
+      throw new Error('NotFound');
+      })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if(err.message === 'NotFound') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_LIKE_ID_NOT_FOUND_ERROR });
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_DELETE_LIKE_ID_NOT_FOUND_ERROR });
       }
-      if (res.status(ERROR_CODE_WRONG_DATA)) {
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR });
       }
-      if (res.status(ERROR_CODE_NOT_FOUND)) {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_DELETE_LIKE_ID_NOT_FOUND_ERROR });
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_INCORRECT });
       }
       return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
