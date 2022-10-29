@@ -48,8 +48,7 @@ module.exports.editUserProfile = (req, res) => {
         res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID });
         return;
       }
-      res.send({
-        data: user })
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -66,13 +65,13 @@ module.exports.editUserAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true, })
     .then((user) => {
       if (!user) {
-      return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID });
-    }
-      res.send({ data: user })
+        res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID }); return;
+      }
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.PATCH_AVA_INV_DATA });
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.PATCH_AV_INV_DATA });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
     });
