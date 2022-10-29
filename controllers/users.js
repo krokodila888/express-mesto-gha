@@ -18,9 +18,6 @@ module.exports.getUser = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID });
-      }
       if (err.message === 'NotFound') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID });
       }
@@ -53,7 +50,7 @@ module.exports.editUserProfile = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({
-          message: ERROR_MESSAGE.USER_PATCH_PROFILE_INV_DATA
+          message: ERROR_MESSAGE.USER_PATCH_PROFILE_INV_DATA,
         });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
@@ -62,7 +59,7 @@ module.exports.editUserProfile = (req, res) => {
 
 module.exports.editUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true, })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID }); return;
