@@ -10,10 +10,10 @@ const ERROR_MESSAGE = {
   USER_PATCH_ID_NOT_FOUND: 'Пользователь с указанным _id не найден.',
   USER_PATCH_AVATAR_INVALID_DATA: 'Переданы некорректные данные при обновлении аватара.',
   CARD_POST: 'Переданы некорректные данные при создании карточки.',
-  CARD_DELETE_ID_NOT_FOUND: 'Карточка с указанным _id не найдена.',
+  CARD_DELETE_NO_ID: 'Карточка с указанным _id не найдена.',
   PUT_LIKE_INV_DATA: 'Переданы некорректные данные для постановки/снятии лайка.',
-  DELETE_LIKE_ID_NOT_FOUND: 'Передан несуществующий _id карточки.',
-  CARD_DELETE_ID_INCORRECT: 'Передан некорректный _id.',
+  DELETE_LIKE_NO_ID: 'Передан несуществующий _id карточки.',
+  CARD_DEL_WRONG_ID: 'Передан некорректный _id.',
 };
 
 module.exports = {

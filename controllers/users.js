@@ -5,7 +5,7 @@ const {
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then(users => res.send({ data: users }))
+    .then((users) => res.send({ data: users }))
     .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG }));
 };
 
@@ -15,7 +15,7 @@ module.exports.getUser = (req, res) => {
       throw new Error('NotFound');
     })
     .then((user) => { if (!user) {
-      return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID })
+      res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID }); return;
     }
       res.send({ data: user }); })
     .catch((err) => {
@@ -46,11 +46,13 @@ module.exports.createUser = (req, res) => {
 
 module.exports.editUserProfile = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => { if (!user) {return res.status(ERROR_CODE_NOT_FOUND).send({
-      message: ERROR_MESSAGE.USER_GET_ID })} res.send({
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true, })
+    .then((user) => {
+      if (!user) {return res.status(ERROR_CODE_NOT_FOUND).send({
+      message: ERROR_MESSAGE.USER_GET_ID })
+      } res.send({
         data: user })
-      })
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({
@@ -63,7 +65,7 @@ module.exports.editUserProfile = (req, res) => {
 
 module.exports.editUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true, })
     .then((user) => {if (!user) {
       return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID }) }
       res.send({ data: user })})

@@ -18,9 +18,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect(
   'mongodb://localhost:27017/mestodb',
-  err => {
+  (err) => {
     if (err) throw err;
-    //console.log('connected to MongoDB');
+    //  console.log('connected to MongoDB');
   },
 );
 
@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 app.use(usersRouter);
 app.use(cardsRouter);
 app.use('*', (req, res) => {
-  res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
+  res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
 });
 
 app.listen(PORT, () => {
