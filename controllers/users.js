@@ -18,6 +18,10 @@ module.exports.getUser = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID });
+      }
+      // оставила тут эту проверку, потому что автотесты требуют в этом месте проверку на ошибку 400
       if (err.message === 'NotFound') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID });
       }
