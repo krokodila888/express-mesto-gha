@@ -1,19 +1,27 @@
 const express = require('express');
+
 const mongoose = require('mongoose');
-const { PORT = 3000 } = process.env;
+
 const bodyParser = require('body-parser');
-const app = express();
+
 const usersRouter = require('./routes/users');
+
 const cardsRouter = require('./routes/cards');
+
+const { ERROR_CODE_NOT_FOUND, ERROR_MESSAGE } = require('./utils/utils');
+
+const app = express();
+const { PORT = 3000 } = process.env;
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-const { ERROR_CODE_NOT_FOUND, ERROR_MESSAGE } = require('./utils/utils.js');
 
 mongoose.connect('mongodb://localhost:27017/mestodb',
   err => {
-      if(err) throw err;
+      if (err) throw err;
       console.log('connected to MongoDB')
-  });
+  }
+);
 
 app.use((req, res, next) => {
   req.user = {
@@ -30,4 +38,5 @@ app.use('*', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`App listen to ${PORT} port`);
-});
+  }
+);

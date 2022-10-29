@@ -1,10 +1,10 @@
 const User = require('../models/user');
-const { ERROR_CODE_WRONG_DATA, ERROR_CODE_NOT_FOUND, ERROR_CODE_SOMETHING_IS_WRONG, ERROR_MESSAGE } = require('../utils/utils.js');
+const { ERROR_CODE_WRONG_DATA, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT, ERROR_MESSAGE } = require('../utils/utils.js');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then(users => res.send({ data: users }))
-    .catch(() => res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG }));
+    .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG }));
 };
 
 module.exports.getUser = (req, res) => {
@@ -12,16 +12,16 @@ module.exports.getUser = (req, res) => {
   .orFail(() => {
     throw new Error('NotFound');
     })
-    .then((user) => {if (!user) {return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR })}
+  .then((user) => {if (!user) {return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR })}
       res.send({ data: user })})
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
       }
-      if(err.message === 'NotFound') {
+      if (err.message === 'NotFound') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID_ERROR });
       }
-      return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
+      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
 };
 
@@ -33,7 +33,7 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_POST_ERROR });
       }
-    return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG })})
+    return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG })})
 };
 
 module.exports.editUserProfile = (req, res) => {
@@ -44,7 +44,7 @@ module.exports.editUserProfile = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_PATCH_PROFILE_INVALID_DATA_ERROR });
       }
-      return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
+      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
 };
 
@@ -56,6 +56,6 @@ module.exports.editUserAvatar = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_PATCH_AVATAR_INVALID_DATA_ERROR });
       }
-      return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
+      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
 };

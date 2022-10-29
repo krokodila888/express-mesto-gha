@@ -1,6 +1,6 @@
 const ERROR_CODE_WRONG_DATA = 400;
 const ERROR_CODE_NOT_FOUND = 404;
-const ERROR_CODE_SOMETHING_IS_WRONG = 500;
+const ERROR_CODE_DEFAULT = 500;
 
 const ERROR_MESSAGE = {
   USER_POST_ERROR: 'Переданы некорректные данные при создании пользователя.',
@@ -19,6 +19,6 @@ const ERROR_MESSAGE = {
 module.exports = {
   ERROR_CODE_WRONG_DATA,
   ERROR_CODE_NOT_FOUND,
-  ERROR_CODE_SOMETHING_IS_WRONG,
+  ERROR_CODE_DEFAULT,
   ERROR_MESSAGE
 };

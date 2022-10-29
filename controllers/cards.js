@@ -1,10 +1,12 @@
 const Card = require('../models/card');
-const { ERROR_CODE_WRONG_DATA, ERROR_CODE_NOT_FOUND, ERROR_CODE_SOMETHING_IS_WRONG, ERROR_MESSAGE } = require('../utils/utils.js');
+const {
+  ERROR_CODE_WRONG_DATA, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT, ERROR_MESSAGE
+} = require('../utils/utils');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then(cards => res.send({ data: cards }))
-    .catch(() => res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG }));
+    .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -16,7 +18,7 @@ module.exports.createCard = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_POST_ERROR });
       }
-      return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
+      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
 };
 
@@ -36,7 +38,7 @@ module.exports.deleteCard = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_INCORRECT });
       }
-      return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
+      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
 };
 
@@ -50,7 +52,7 @@ module.exports.likeCard = (req, res) =>
       })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if(err.message === 'NotFound') {
+      if (err.message === 'NotFound') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_PUT_LIKE_INVALID_DATA_ERROR });
       }
       if (err.name === 'ValidationError') {
@@ -59,7 +61,7 @@ module.exports.likeCard = (req, res) =>
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_INCORRECT });
       }
-      return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
+      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
 
 module.exports.deleteLike = (req, res) =>
@@ -72,7 +74,7 @@ module.exports.deleteLike = (req, res) =>
       })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if(err.message === 'NotFound') {
+      if (err.message === 'NotFound') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_DELETE_LIKE_ID_NOT_FOUND_ERROR });
       }
       if (err.name === 'ValidationError') {
@@ -81,5 +83,5 @@ module.exports.deleteLike = (req, res) =>
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_ID_INCORRECT });
       }
-      return res.status(ERROR_CODE_SOMETHING_IS_WRONG).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
+      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
     });
