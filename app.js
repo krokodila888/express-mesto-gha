@@ -16,10 +16,11 @@ const { PORT = 3000 } = process.env;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/mestodb',
+mongoose.connect(
+  'mongodb://localhost:27017/mestodb',
   err => {
-      if (err) throw err;
-      console.log('connected to MongoDB')
+    if (err) throw err;
+    //console.log('connected to MongoDB');
   }
 );
 
@@ -37,6 +38,5 @@ app.use('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`App listen to ${PORT} port`);
-  }
-);
+//  console.log(`App listen to ${PORT} port`);
+});
