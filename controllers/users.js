@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const {
-  ERROR_CODE_WRONG_DATA, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT, ERROR_MESSAGE
+  ERROR_CODE_WRONG_DATA, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT, ERROR_MESSAGE,
 } = require('../utils/utils');
 
 module.exports.getUsers = (req, res) => {
@@ -11,11 +11,11 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
-  .orFail(() => {
-    throw new Error('NotFound');
+    .orFail(() => {
+      throw new Error('NotFound');
     })
-  .then((user) => {if (!user) {return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID })}
-      res.send({ data: user })})
+    .then((user) => { if (!user) {return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID })}
+      res.send({ data: user }); })
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID });
@@ -35,7 +35,8 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_POST });
       }
-    return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG })})
+      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_IS_WRONG });
+    });
 };
 
 module.exports.editUserProfile = (req, res) => {
