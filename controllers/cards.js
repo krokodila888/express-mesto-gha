@@ -73,8 +73,7 @@ module.exports.deleteLike = (req, res) =>
   )
     .orFail(() => {
       throw new Error('NotFound');
-      }
-    )
+    })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.message === 'NotFound') {
