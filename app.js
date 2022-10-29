@@ -21,12 +21,12 @@ mongoose.connect(
   err => {
     if (err) throw err;
     //console.log('connected to MongoDB');
-  }
+  },
 );
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '6359701ab47257d0c732800d'
+    _id: '6359701ab47257d0c732800d',
   };
   next();
 });
