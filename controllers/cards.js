@@ -32,9 +32,6 @@ module.exports.deleteCard = (req, res) => {
       if (err.message === 'NotFound') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_DELETE_NO_ID });
       }
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DELETE_NO_ID });
-      }
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DEL_WRONG_ID });
       }
@@ -43,9 +40,8 @@ module.exports.deleteCard = (req, res) => {
 };
 
 module.exports.likeCard = (req, res) =>
-  Card.findByIdAndUpdate(req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true }
+  Card.findByIdAndUpdate(
+    req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true },
   )
     .orFail(() => {
       throw new Error('NotFound');
@@ -66,9 +62,7 @@ module.exports.likeCard = (req, res) =>
 
 module.exports.deleteLike = (req, res) =>
   Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true },
+    req.params.cardId, { $pull: { likes: req.user._id } }, { new: true },
   )
     .orFail(() => {
       throw new Error('NotFound');
