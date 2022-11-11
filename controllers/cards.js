@@ -39,7 +39,7 @@ module.exports.deleteCard = (req, res, next) => {
         .orFail(() => {
           throw new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID);
         })
-        .then((card) => res.send({ data: card }))
+        .then(() => res.send({ data: card }))
         .catch((err) => {
           if (err.message === 'NotFound') {
             next(new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID));
