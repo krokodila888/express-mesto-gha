@@ -22,13 +22,13 @@ cardsRouter.delete('/cards/:cardId', celebrate({
 
 cardsRouter.put('/cards/:cardId/likes', celebrate({
   body: Joi.object().keys({
-    cardId: Joi.string().length(24).required(),
+    cardId: Joi.string().length(24).required().hex(),
   }),
 }), likeCard);
 
 cardsRouter.delete('/cards/:cardId/likes', celebrate({
   body: Joi.object().keys({
-    cardId: Joi.string().length(24).required(),
+    cardId: Joi.string().length(24).required().hex(),
   }),
 }), deleteLike);
 

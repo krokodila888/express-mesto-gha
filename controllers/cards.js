@@ -60,7 +60,7 @@ module.exports.likeCard = (req, res, next) => {
     })
     .then((card) => {
       if (res.status(RES_OK_CODE)) {
-      res.send({ data: card })
+        res.send({ data: card });
       }
     })
     // res.status(RES_OK_CODE).send({ data: card }))
@@ -86,7 +86,7 @@ module.exports.deleteLike = (req, res, next) => {
     })
     .then((card) => {
       if (res.status(RES_OK_CODE)) {
-      res.send({ data: card })
+        res.send({ data: card });
       }
     })
     // res.status(RES_OK_CODE).send({ data: card }))
