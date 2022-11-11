@@ -9,8 +9,6 @@ const cardsRouter = require('./routes/cards');
 // const AuthError = require('./errors/AuthError');
 const NotFoundError = require('./errors/NotFoundError');
 
-const { ERROR_CODE_NOT_FOUND } = require('./utils/utils');
-
 const { PORT = 3000 } = process.env;
 const app = express();
 app.use(cookieParser());
@@ -50,10 +48,8 @@ app.use(auth);
 
 app.use(usersRouter);
 app.use(cardsRouter);
-app.use('*', (req, res) => {
-  if (res.status(ERROR_CODE_NOT_FOUND)) {
-    throw new NotFoundError('Необходимо авторизироваться');
-  }
+app.use('*', () => {
+  throw new NotFoundError('Необходимо авторизироваться')
 });
 
 app.use(errors());
