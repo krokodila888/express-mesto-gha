@@ -73,7 +73,7 @@ module.exports.createUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new RequestError(ERROR_MESSAGE.USER_POST));
       }
-      if (err.code === 11000) {
+      else if (err.code === 11000) {
         next(new DoubleEmailError('Такой email уже существует.'));
       } else {
         next(err);
