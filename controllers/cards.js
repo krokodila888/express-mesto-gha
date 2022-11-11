@@ -4,7 +4,7 @@ const {
 } = require('../utils/utils');
 const NotFoundError = require('../errors/NotFoundError');
 const RequestError = require('../errors/RequestError');
-// const AuthError = require('../errors/AuthError');
+const WrongCardError = require('../errors/WrongCardError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -42,6 +42,9 @@ module.exports.deleteCard = (req, res, next) => {
         .catch((err) => {
           if (err.message === 'NotFound') {
             next(new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID));
+          }
+          if (card.owner.toString() !== req.user._id) {
+            next(new WrongCardError('Эту карточку удалить нельзя. Это чужая карточка!'));
           }
           if (err.name === 'CastError') {
             next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
