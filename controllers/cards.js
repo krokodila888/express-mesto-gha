@@ -16,7 +16,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => res.send({ cards }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError(ERROR_MESSAGE.CARD_POST));
@@ -51,7 +51,7 @@ module.exports.deleteCard = (req, res, next) => {
           }
         });
     });
-}
+};
 
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
@@ -68,8 +68,7 @@ module.exports.likeCard = (req, res, next) => {
       }
       if (err.name === 'CastError') {
         next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
-      }
-      else {
+      } else {
         next(err);
       }
     });

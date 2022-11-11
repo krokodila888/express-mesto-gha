@@ -53,21 +53,21 @@ exports.createUser = (req, res, next) => {
     name, about, avatar, email,
   } = req.body;
   bcrypt.hash(req.body.password, 10)
-    .then(hash => User.create({
+    .then(hash => {User.create({
       email,
       password: hash,
       name,
       about,
       avatar,
-    }))
-    .then((user) => res.send({user}))
+    })})
+    .then((user) => res.send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError(ERROR_MESSAGE.USER_POST));
       }
       if (err.code === 11000) {
         next(new DoubleEmailError('Такой email уже существует.'));
-    } else {
+      } else {
         next(err);
       }
     });

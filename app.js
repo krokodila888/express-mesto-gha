@@ -8,7 +8,6 @@ const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const AuthError = require('./errors/AuthError');
 
-
 const { ERROR_CODE_NOT_FOUND } = require('./utils/utils');
 
 const { PORT = 3000 } = process.env;
