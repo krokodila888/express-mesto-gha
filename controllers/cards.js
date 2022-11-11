@@ -1,6 +1,6 @@
 const Card = require('../models/card');
 const {
-  ERROR_MESSAGE, RES_OK_CODE
+  ERROR_MESSAGE, RES_OK_CODE,
 } = require('../utils/utils');
 const NotFoundError = require('../errors/NotFoundError');
 const RequestError = require('../errors/RequestError');
@@ -58,7 +58,12 @@ module.exports.likeCard = (req, res, next) => {
     .orFail(() => {
       throw new Error('NotFound');
     })
-    .then((card) => res.status(RES_OK_CODE).send({ data: card }))
+    .then((card) => {
+      if (res.status(RES_OK_CODE)) {
+      res.send({ data: card })
+      }
+    })
+    // res.status(RES_OK_CODE).send({ data: card }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         next(new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
@@ -79,7 +84,12 @@ module.exports.deleteLike = (req, res, next) => {
     .orFail(() => {
       throw new Error('NotFound');
     })
-    .then((card) => res.status(RES_OK_CODE).send({ data: card }))
+    .then((card) => {
+      if (res.status(RES_OK_CODE)) {
+      res.send({ data: card })
+      }
+    })
+    // res.status(RES_OK_CODE).send({ data: card }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         next(new NotFoundError(ERROR_MESSAGE.DELETE_LIKE_NO_ID));

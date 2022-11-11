@@ -7,7 +7,7 @@ const DoubleEmailError = require('../errors/DoubleEmailError');
 
 const User = require('../models/user');
 const {
-  ERROR_MESSAGE, RES_OK_CODE
+  ERROR_MESSAGE, RES_OK_CODE,
 } = require('../utils/utils');
 
 module.exports.getUsers = (req, res, next) => {
