@@ -1,35 +1,50 @@
 const express = require('express');
-
 const mongoose = require('mongoose');
-
 const bodyParser = require('body-parser');
-
 const usersRouter = require('./routes/users');
-
 const cardsRouter = require('./routes/cards');
+const cookieParser = require('cookie-parser');
+const helmet = require("helmet");
+const { errors, celebrate, Joi } = require('celebrate');
 
 const { ERROR_CODE_NOT_FOUND, ERROR_MESSAGE } = require('./utils/utils');
 
-const app = express();
 const { PORT = 3000 } = process.env;
+const app = express();
+app.use(cookieParser());
+app.use(helmet());
+app.use(errors());
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-mongoose.connect(
-  'mongodb://localhost:27017/mestodb',
+mongoose.connect('mongodb://localhost:27017/mestodb',
   (err) => {
     if (err) throw err;
-    //  console.log('connected to MongoDB');
+    console.log('connected to MongoDB');
   },
 );
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '6359701ab47257d0c732800d',
-  };
-  next();
-});
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+const { createUser, login } = require('./controllers/users');
+
+const auth = require('./middlewares/auth');
+
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(6),
+  }),
+}), login);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(6),
+    name: Joi.string().min(2).max(30).default("Жак-Ив Кусто"),
+    about: Joi.string().min(2).max(30).default("Исследователь"),
+    avatar: Joi.string().pattern(/^https?:\/\/(www\.)?([A-Za-z\d-])+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]#?$/).default("https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png"),
+  }),
+}), createUser);
+
+app.use(auth);
 
 app.use(usersRouter);
 app.use(cardsRouter);
@@ -37,6 +52,11 @@ app.use('*', (req, res) => {
   res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
 });
 
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(500).send({ message: 'На сервере произошла ошибка' });
+});
+
 app.listen(PORT, () => {
-//  console.log(`App listen to ${PORT} port`);
+  console.log(`App listen to ${PORT} port`);
 });

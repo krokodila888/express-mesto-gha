@@ -1,45 +1,60 @@
 const Card = require('../models/card');
 const {
-  ERROR_CODE_WRONG_DATA, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT, ERROR_MESSAGE,
+  ERROR_MESSAGE,
 } = require('../utils/utils');
+const NotFoundError = require('../errors/notFoundError');
+const RequestError = require('../errors/RequestError');
+const AuthError = require('../errors/AuthError');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG }));
+    .catch((err) => next(err));
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_POST });
+        next (new RequestError(ERROR_MESSAGE.CARD_POST))}
+      else {
+        next(err);
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
     });
 };
 
-module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.message === 'NotFound') {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.CARD_DELETE_NO_ID });
+module.exports.deleteCard = (req, res, next) => {
+  Card.findById(req.params.cardId)
+    .then((card) => {
+      if (!card) {
+        next (new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID))
       }
-      if (err.name === 'CastError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DEL_WRONG_ID });
+      if (card.owner.toString() !== req.user._id) {
+        next (new RequestError('Эту карточку удалить нельзя. Это чужая карточка!'))
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
+      Card.findByIdAndRemove(req.params.cardId)
+        .orFail(() => {
+          throw new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID);
+        })
+        .then((card) => res.send({ data: card }))
+        .catch((err) => {
+          if (err.message === 'NotFound') {
+            next(new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID))
+          }
+          if (err.name === 'CastError') {
+            next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID))
+          }
+          else {
+            next(err);
+          }
     });
-};
+    });
+  }
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .orFail(() => {
       throw new Error('NotFound');
@@ -47,19 +62,21 @@ module.exports.likeCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.PUT_LIKE_INV_DATA });
+        next(new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
       }
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.PUT_LIKE_INV_DATA });
+        next(new RequestError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
       }
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DEL_WRONG_ID });
+        next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID))
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
+      else {
+        next(err);
+      }
     });
 };
 
-module.exports.deleteLike = (req, res) => {
+module.exports.deleteLike = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => {
       throw new Error('NotFound');
@@ -67,14 +84,16 @@ module.exports.deleteLike = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.DELETE_LIKE_NO_ID });
+        next(new NotFoundError(ERROR_MESSAGE.DELETE_LIKE_NO_ID));
       }
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.PUT_LIKE_INV_DATA });
+        next(new RequestError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
       }
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.CARD_DEL_WRONG_ID });
+        next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
+      else {
+        next(err);
+      }
     });
 };

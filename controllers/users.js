@@ -1,79 +1,128 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const NotFoundError = require('../errors/notFoundError');
+const RequestError = require('../errors/RequestError');
+const AuthError = require('../errors/AuthError');
+
 const User = require('../models/user');
 const {
-  ERROR_CODE_WRONG_DATA, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT, ERROR_MESSAGE,
+  ERROR_MESSAGE,
 } = require('../utils/utils');
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG }));
+    .catch((err) => next(err));
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
-      throw new Error('NotFound');
+      throw new NotFoundError('Пользователь не найден');
     })
     .then((user) => {
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_GET_ID });
+        next (new RequestError(ERROR_MESSAGE.USER_GET_ID))
       }
       // оставила тут эту проверку, потому что автотесты требуют в этом месте проверку на ошибку 400
       if (err.message === 'NotFound') {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID });
+        next (new NotFoundError(ERROR_MESSAGE.USER_GET_ID));
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
+      else {
+        next(err);
+      }
     });
 };
 
-module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.send(user))
+module.exports.getCurrentUser = (req, res, next) => {
+    User.findById(req.user._id || req.params.userId)
+    .orFail(() => {
+      throw new NotFoundError('Пользователь не найден');
+    })
+    .then((user) => {
+      console.log(user);
+      res.send({ user });
+    })
+    .catch((err) => next(err));
+};
+
+exports.createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email,
+  } = req.body;
+  bcrypt.hash(req.body.password, 10)
+    .then(hash => User.create({
+      email,
+      password: hash,
+      name,
+      about,
+      avatar,
+    }))
+    .then((user) => res.send({user}))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.USER_POST });
+        next (new RequestError(ERROR_MESSAGE.USER_POST))
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
-    });
+      else {
+        next(err);
+      }
+    })
 };
 
-module.exports.editUserProfile = (req, res) => {
+module.exports.editUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID });
-        return;
+        next (new NotFoundError(ERROR_MESSAGE.USER_GET_ID))
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({
-          message: ERROR_MESSAGE.USER_PATCH_PROFILE_INV_DATA,
-        });
+        next (new RequestError(ERROR_MESSAGE.USER_PATCH_PROFILE_INV_DATA))
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
+      else {
+        next(err);
+      }
     });
 };
 
-module.exports.editUserAvatar = (req, res) => {
+module.exports.editUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(ERROR_CODE_NOT_FOUND).send({ message: ERROR_MESSAGE.USER_GET_ID }); return;
+        next (new NotFoundError(ERROR_MESSAGE.USER_GET_ID))
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_WRONG_DATA).send({ message: ERROR_MESSAGE.PATCH_AV_INV_DATA });
+        next (new RequestError(ERROR_MESSAGE.PATCH_AV_INV_DATA))
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: ERROR_MESSAGE.SOMETHING_WRONG });
+      else {
+        next(err);
+      }
     });
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
+      res
+        .cookie('jwt', token, {
+        // token - наш JWT токен, который мы отправляем
+          maxAge: 3600000,
+          httpOnly: true
+  })
+        .send({ message: `${token}, ${user}` });
+    })
+    .catch(next);
 };
