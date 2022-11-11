@@ -16,7 +16,7 @@ cardsRouter.post('/cards', celebrate({
 
 cardsRouter.delete('/cards/:cardId', celebrate({
   body: Joi.object().keys({
-    cardId: Joi.string().length(24).required(),
+    cardId: Joi.string().length(24).hex().required(),
   }),
 }), deleteCard);
 
