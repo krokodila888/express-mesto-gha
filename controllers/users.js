@@ -49,17 +49,17 @@ module.exports.getCurrentUser = (req, res, next) => {
 };
 
 exports.createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email,
-  } = req.body;
+  // const {
+  // name, about, avatar, email,
+  // } = req.body;
   bcrypt.hash(req.body.password, 10)
     .then((hash) => {
       User.create({
-        email,
+        email: req.body.email,
         password: hash,
-        name,
-        about,
-        avatar,
+        name: req.body.name,
+        about: req.body.about,
+        avatar: req.body.avatar,
       });
     })
     .then((user) => res.status(RES_OK_CODE).send({
