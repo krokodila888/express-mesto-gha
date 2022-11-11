@@ -20,8 +20,7 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError(ERROR_MESSAGE.CARD_POST));
-      }
-      else {
+      } else {
         next(err);
       }
     });
@@ -47,8 +46,7 @@ module.exports.deleteCard = (req, res, next) => {
           }
           if (err.name === 'CastError') {
             next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
-          }
-          else {
+          } else {
             next(err);
           }
         });
@@ -69,7 +67,7 @@ module.exports.likeCard = (req, res, next) => {
         next(new RequestError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
       }
       if (err.name === 'CastError') {
-        next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID))
+        next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
       }
       else {
         next(err);
@@ -92,8 +90,7 @@ module.exports.deleteLike = (req, res, next) => {
       }
       if (err.name === 'CastError') {
         next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
-      }
-      else {
+      } else {
         next(err);
       }
     });

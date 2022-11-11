@@ -31,8 +31,7 @@ module.exports.getUser = (req, res, next) => {
       // оставила тут эту проверку, потому что автотесты требуют в этом месте проверку на ошибку 400
       if (err.message === 'NotFound') {
         next(new NotFoundError(ERROR_MESSAGE.USER_GET_ID));
-      }
-      else {
+      } else {
         next(err);
       }
     });
@@ -44,7 +43,6 @@ module.exports.getCurrentUser = (req, res, next) => {
       throw new NotFoundError('Пользователь не найден');
     })
     .then((user) => {
-      console.log(user);
       res.send({ user });
     })
     .catch((err) => next(err));
@@ -69,11 +67,10 @@ exports.createUser = (req, res, next) => {
       }
       if (err.code === 11000) {
         next(new DoubleEmailError('Такой email уже существует.'));
-    }
-      else {
+    } else {
         next(err);
       }
-    })
+    });
 };
 
 module.exports.editUserProfile = (req, res, next) => {
@@ -88,8 +85,7 @@ module.exports.editUserProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError(ERROR_MESSAGE.USER_PATCH_PROFILE_INV_DATA));
-      }
-      else {
+      } else {
         next(err);
       }
     });
@@ -107,8 +103,7 @@ module.exports.editUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError(ERROR_MESSAGE.PATCH_AV_INV_DATA));
-      }
-      else {
+      } else {
         next(err);
       }
     });
@@ -124,8 +119,8 @@ module.exports.login = (req, res, next) => {
         .cookie('jwt', token, {
           maxAge: 3600000,
           httpOnly: true,
-  })
-    .send({ message: `${token}, ${user}` });
+        })
+        .send({ message: `${token}, ${user}` });
     })
     .catch(next);
 };

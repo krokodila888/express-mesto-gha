@@ -2,11 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
-const usersRouter = require('./routes/users');
-const cardsRouter = require('./routes/cards');
-const AuthError = require('../errors/AuthError');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+const usersRouter = require('./routes/users');
+const cardsRouter = require('./routes/cards');
+const AuthError = require('./errors/AuthError');
+
 
 const { ERROR_CODE_NOT_FOUND } = require('./utils/utils');
 
@@ -52,7 +53,8 @@ app.use(usersRouter);
 app.use(cardsRouter);
 app.use('*', (req, res) => {
   if (res.status(ERROR_CODE_NOT_FOUND)) {
-    throw new AuthError('Необходимо авторизироваться')}
+    throw new AuthError('Необходимо авторизироваться');
+  }
 });
 
 app.use((err, req, res, next) => {
