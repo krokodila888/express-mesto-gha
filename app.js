@@ -6,8 +6,8 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
-const AuthError = require('./errors/AuthError');
-// const NotFoundError = require('./errors/NotFoundError');
+// const AuthError = require('./errors/AuthError');
+const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -49,13 +49,13 @@ app.use(auth);
 app.use(usersRouter);
 app.use(cardsRouter);
 app.use('*', () => {
-  throw new AuthError('Необходимо авторизироваться');
+  throw new NotFoundError('Вы сделали что-то не то. Вернитесь назад.');
 });
 
 app.use(errors());
 app.use((err, req, res, next) => {
   // console.log(err);
-  res.status(500).send({ message: 'На сервере произошла ошибка' });
+  res.status(500).send({ message: 'На сервере произошла ошибка.' });
   next();
 });
 
