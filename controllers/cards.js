@@ -2,9 +2,9 @@ const Card = require('../models/card');
 const {
   ERROR_MESSAGE,
 } = require('../utils/utils');
-const NotFoundError = require('../errors/notFoundError');
+const NotFoundError = require('../errors/NotFoundError');
 const RequestError = require('../errors/RequestError');
-const AuthError = require('../errors/AuthError');
+// const AuthError = require('../errors/AuthError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -19,7 +19,8 @@ module.exports.createCard = (req, res, next) => {
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next (new RequestError(ERROR_MESSAGE.CARD_POST))}
+        next(new RequestError(ERROR_MESSAGE.CARD_POST));
+      }
       else {
         next(err);
       }
@@ -30,10 +31,10 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        next (new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID))
+        next(new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID));
       }
       if (card.owner.toString() !== req.user._id) {
-        next (new RequestError('Эту карточку удалить нельзя. Это чужая карточка!'))
+        next(new RequestError('Эту карточку удалить нельзя. Это чужая карточка!'));
       }
       Card.findByIdAndRemove(req.params.cardId)
         .orFail(() => {
@@ -42,17 +43,17 @@ module.exports.deleteCard = (req, res, next) => {
         .then((card) => res.send({ data: card }))
         .catch((err) => {
           if (err.message === 'NotFound') {
-            next(new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID))
+            next(new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID));
           }
           if (err.name === 'CastError') {
-            next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID))
+            next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
           }
           else {
             next(err);
           }
+        });
     });
-    });
-  }
+}
 
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
