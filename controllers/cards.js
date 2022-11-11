@@ -59,8 +59,8 @@ module.exports.likeCard = (req, res, next) => {
       throw new Error('NotFound');
     })
     .then((card) => {
-        res.status(RES_OK_CODE)
-        res.send({ data: card });
+      res.status(RES_OK_CODE);
+      res.send({ data: card });
     })
     // res.status(RES_OK_CODE).send({ data: card }))
     .catch((err) => {
