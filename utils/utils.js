@@ -1,6 +1,8 @@
 const ERROR_CODE_WRONG_DATA = 400;
 const ERROR_CODE_NOT_FOUND = 404;
+const ERROR_CODE_WRONG_CARD = 403;
 const ERROR_CODE_DEFAULT = 500;
+const RES_OK_CODE = 200 || 201;
 
 const ERROR_MESSAGE = {
   USER_POST: 'Переданы некорректные данные при создании пользователя.',
@@ -19,6 +21,8 @@ const ERROR_MESSAGE = {
 module.exports = {
   ERROR_CODE_WRONG_DATA,
   ERROR_CODE_NOT_FOUND,
+  ERROR_CODE_WRONG_CARD,
   ERROR_CODE_DEFAULT,
   ERROR_MESSAGE,
+  RES_OK_CODE
 };

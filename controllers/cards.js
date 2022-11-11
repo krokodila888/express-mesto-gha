@@ -1,6 +1,6 @@
 const Card = require('../models/card');
 const {
-  ERROR_MESSAGE,
+  ERROR_MESSAGE, RES_OK_CODE
 } = require('../utils/utils');
 const NotFoundError = require('../errors/NotFoundError');
 const RequestError = require('../errors/RequestError');
@@ -16,7 +16,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .then((cards) => res.send({ cards }))
+    .then((cards) => res.status(RES_OK_CODE).send({ cards }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError(ERROR_MESSAGE.CARD_POST));
@@ -58,7 +58,7 @@ module.exports.likeCard = (req, res, next) => {
     .orFail(() => {
       throw new Error('NotFound');
     })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(RES_OK_CODE).send({ data: card }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         next(new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
@@ -79,7 +79,7 @@ module.exports.deleteLike = (req, res, next) => {
     .orFail(() => {
       throw new Error('NotFound');
     })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(RES_OK_CODE).send({ data: card }))
     .catch((err) => {
       if (err.message === 'NotFound') {
         next(new NotFoundError(ERROR_MESSAGE.DELETE_LIKE_NO_ID));
