@@ -49,11 +49,12 @@ app.use(auth);
 app.use(usersRouter);
 app.use(cardsRouter);
 app.use('*', () => {
-  throw new NotFoundError('Необходимо авторизироваться')
+  throw new NotFoundError('Необходимо авторизироваться');
 });
 
 app.use(errors());
 app.use((err, req, res, next) => {
+  console.log(err);
   res.status(500).send({ message: 'На сервере произошла ошибка' });
   next();
 });
