@@ -53,14 +53,18 @@ exports.createUser = (req, res, next) => {
     name, about, avatar, email,
   } = req.body;
   bcrypt.hash(req.body.password, 10)
-    .then(hash => (User.create({
-      email,
-      password: hash,
-      name,
-      about,
-      avatar,
-    })))
-    .then((user) => res.send({ user }))
+    .then(hash => {
+      User.create({
+        email,
+        password: hash,
+        name,
+        about,
+        avatar,
+      });
+    })
+    .then((user) => res.status(200).send({
+      name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError(ERROR_MESSAGE.USER_POST));
