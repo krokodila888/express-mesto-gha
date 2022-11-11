@@ -7,17 +7,23 @@ const {
 } = require('../controllers/users');
 
 usersRouter.get('/users', getUsers);
+
 usersRouter.get('/users/me', celebrate({
   body: Joi.object().keys({
     userId: Joi.string().length(24).hex().required(),
   }),
 }), getCurrentUser);
 
-usersRouter.get('/users/:userId', getUser);
+usersRouter.get('/users/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().length(24).hex().required(),
+  }),
+}), getUser);
+
 usersRouter.patch('/users/me', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).required().max(30),
+    about: Joi.string().min(2).required().max(30),
   }),
 }), editUserProfile);
 
