@@ -7,19 +7,13 @@ const {
 } = require('../controllers/users');
 
 usersRouter.get('/users', getUsers);
-
 usersRouter.get('/users/me', celebrate({
   body: Joi.object().keys({
-    userId: Joi.string().length(24).required(),
+    userId: Joi.string().length(24).hex().required(),
   }),
 }), getCurrentUser);
 
-usersRouter.get('/users/:userId', celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().length(24).required(),
-  }),
-}), getUser);
-
+usersRouter.get('/users/:userId', getUser);
 usersRouter.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -29,7 +23,7 @@ usersRouter.patch('/users/me', celebrate({
 
 usersRouter.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(/^https?:\/\/(www\.)?([A-Za-z\d-])+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]#?$/),
+    avatar: Joi.string().required().pattern(/^https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/),
   }),
 }), editUserAvatar);
 
