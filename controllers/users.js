@@ -48,10 +48,7 @@ module.exports.getCurrentUser = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-exports.createUser = (req, res, next) => {
-  // const {
-  // name, about, avatar, email,
-  // } = req.body;
+module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
     .then((hash) => {
       User.create({
