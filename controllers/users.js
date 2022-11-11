@@ -7,7 +7,7 @@ const DoubleEmailError = require('../errors/DoubleEmailError');
 
 const User = require('../models/user');
 const {
-  ERROR_MESSAGE, RES_OK_CODE,
+  ERROR_MESSAGE,
 } = require('../utils/utils');
 
 module.exports.getUsers = (req, res, next) => {
@@ -62,7 +62,7 @@ exports.createUser = (req, res, next) => {
         avatar: req.body.avatar,
       });
     })
-    .then((user) => res.status(RES_OK_CODE).send({
+    .then((user) => res.send({
       name: user.name, about: user.about, avatar: user.avatar, email: user.email,
     }))
     .catch((err) => {
@@ -102,7 +102,7 @@ module.exports.editUserAvatar = (req, res, next) => {
       if (!user) {
         next(new NotFoundError(ERROR_MESSAGE.USER_GET_ID));
       }
-      res.status(200).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
