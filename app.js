@@ -49,7 +49,7 @@ app.use(auth);
 app.use(usersRouter);
 app.use(cardsRouter);
 app.use('*', () => {
-  throw new NotFoundError('Вы сделали что-то не то. Вернитесь назад.');
+  return new NotFoundError('Вы сделали что-то не то. Вернитесь назад.');
 });
 
 app.use(errors());
