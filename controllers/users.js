@@ -57,21 +57,21 @@ module.exports.createUser = (req, res, next) => {
       User.create({
         name, about, avatar, email, password: hash,
       })
-      .then((user) => res.send({
-        name: user.name, about: user.about, avatar: user.avatar, email: user.email,
-      }))
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          next(new RequestError(ERROR_MESSAGE.USER_POST));
-        }
-        if (err.code === 11000) {
-          next(new DoubleEmailError('Такой email уже существует.'));
-        } else {
-          next(err);
-        }
-      });
+        .then((user) => res.send({
+          name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+        }))
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            next(new RequestError(ERROR_MESSAGE.USER_POST));
+          }
+          if (err.code === 11000) {
+            next(new DoubleEmailError('Такой email уже существует.'));
+          } else {
+            next(err);
+          }
+        });
     })
-  .catch(next);
+    .catch(next);
 };
 
 module.exports.editUserProfile = (req, res, next) => {

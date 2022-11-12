@@ -53,7 +53,7 @@ module.exports.deleteCard = (req, res, next) => {
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .orFail(() => {
-      throw new Error('NotFound');
+      throw new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA);
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
@@ -74,7 +74,7 @@ module.exports.likeCard = (req, res, next) => {
 module.exports.deleteLike = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => {
-      throw new Error('NotFound');
+      throw new NotFoundError(ERROR_MESSAGE.DELETE_LIKE_NO_ID);
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
