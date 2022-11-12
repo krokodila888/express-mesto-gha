@@ -34,7 +34,8 @@ module.exports.getUser = (req, res, next) => {
       } else {
         next(err);
       }
-    });
+    })
+    .catch((err) => next(err));
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
@@ -71,7 +72,7 @@ module.exports.createUser = (req, res, next) => {
           }
         });
     })
-    .catch(next);
+    .catch((err) => next(err));
 };
 
 module.exports.editUserProfile = (req, res, next) => {
