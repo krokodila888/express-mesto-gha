@@ -26,6 +26,7 @@ mongoose.connect(
 );
 
 const auth = require('./middlewares/auth');
+const errorsHandler = require('./middlewares/errorsHandler');
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -58,6 +59,7 @@ app.use((err, req, res, next) => {
   res.status(500).send({ message: 'На сервере произошла ошибка.' });
   next();
 });
+app.use(errorsHandler);
 
 app.listen(PORT, () => {
   // console.log(`App listen to ${PORT} port`);

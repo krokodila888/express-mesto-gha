@@ -45,7 +45,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
       } else {
-        next(err);
+        return next(err);
       }
     });
 };
@@ -75,7 +75,7 @@ module.exports.likeCard = (req, res, next) => {
     if (err.name === 'CastError') {
       next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
     } else {
-      next(err);
+      return next(err);
     }
   });
 };
@@ -100,7 +100,7 @@ module.exports.deleteLike = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
       } else {
-        next(err);
+        return next(err);
       }
     });
 };
