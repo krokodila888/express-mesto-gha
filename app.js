@@ -5,10 +5,11 @@ const { errors, celebrate, Joi } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const { createUser, login } = require('./controllers/users');
-const usersRouter = require('./routes/users');
-const cardsRouter = require('./routes/cards');
+// const usersRouter = require('./routes/users');
+// const cardsRouter = require('./routes/cards');
 // const AuthError = require('./errors/AuthError');
-// const NotFoundError = require('./errors/NotFoundError');
+const NotFoundError = require('./errors/NotFoundError');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -24,8 +25,6 @@ mongoose.connect(
     // console.log('connected to MongoDB');
   },
 );
-
-const auth = require('./middlewares/auth');
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -46,11 +45,12 @@ app.post('/signup', celebrate({
 
 app.use(auth);
 
-app.use(usersRouter);
-app.use(cardsRouter);
-app.use('*', (res) => {
-  // throw new NotFoundError('Вы сделали что-то не то. Вернитесь назад.');
-  res.status(404).send({ message: 'Вы сделали что-то не то. Вернитесь назад.' });
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
+// app.use(usersRouter);
+// app.use(cardsRouter);
+app.use('*', () => {
+  throw new NotFoundError('Вы сделали что-то не то. Вернитесь назад.');
 });
 
 app.use(errors());
