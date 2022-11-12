@@ -45,7 +45,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
       } else {
-        return next(err);
+        next(err);
       }
     });
 };
@@ -63,21 +63,21 @@ module.exports.likeCard = (req, res, next) => {
           throw new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA);
         })
         .then((newCard) => res.send({ data: newCard }))
-        .catch((err) => next(err))
+        .catch((err) => next(err));
     })
-  .catch((err) => {
-    if (err.message === 'NotFound') {
-      next(new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
-    }
-    if (err.name === 'ValidationError') {
-      next(new RequestError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
-    }
-    if (err.name === 'CastError') {
-      next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
-    } else {
-      return next(err);
-    }
-  });
+    .catch((err) => {
+      if (err.message === 'NotFound') {
+        next(new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
+      }
+      if (err.name === 'ValidationError') {
+        next(new RequestError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
+      }
+      if (err.name === 'CastError') {
+        next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.deleteLike = (req, res, next) => {
@@ -100,7 +100,7 @@ module.exports.deleteLike = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
       } else {
-        return next(err);
+        next(err);
       }
     });
 };
