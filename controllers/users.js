@@ -49,36 +49,29 @@ module.exports.getCurrentUser = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email,
+  } = req.body;
   bcrypt.hash(req.body.password, 10)
     .then((hash) => {
       User.create({
-        email: req.body.email,
-        password: hash,
-        name: req.body.name,
-        about: req.body.about,
-        avatar: req.body.avatar,
+        name, about, avatar, email, password: hash,
+      })
+      .then((user) => res.send({
+        name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+      }))
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          next(new RequestError(ERROR_MESSAGE.USER_POST));
+        }
+        if (err.code === 11000) {
+          next(new DoubleEmailError('Такой email уже существует.'));
+        } else {
+          next(err);
+        }
       });
     })
-    .then((user) => {
-      const newUser = {
-        _id: user._id,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        email: user.email,
-      };
-      res.send(newUser);
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new RequestError(ERROR_MESSAGE.USER_POST));
-      }
-      if (err.code === 11000) {
-        next(new DoubleEmailError('Такой email уже существует.'));
-      } else {
-        next(err);
-      }
-    });
+  .catch(next);
 };
 
 module.exports.editUserProfile = (req, res, next) => {
