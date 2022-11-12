@@ -8,7 +8,7 @@ const { createUser, login } = require('./controllers/users');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 // const AuthError = require('./errors/AuthError');
-const NotFoundError = require('./errors/NotFoundError');
+// const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -48,8 +48,9 @@ app.use(auth);
 
 app.use(usersRouter);
 app.use(cardsRouter);
-app.use('*', () => {
-  return new NotFoundError('Вы сделали что-то не то. Вернитесь назад.');
+app.use('*', (res) => {
+  // throw new NotFoundError('Вы сделали что-то не то. Вернитесь назад.');
+  res.status(404).send({ message: 'Вы сделали что-то не то. Вернитесь назад.' });
 });
 
 app.use(errors());
