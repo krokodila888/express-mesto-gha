@@ -56,25 +56,28 @@ module.exports.likeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError(ERROR_MESSAGE.DELETE_LIKE_NO_ID);
       }
-      Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+      Card.findByIdAndUpdate(req.params.cardId, {
+        $addToSet: { likes: req.user._id }
+      }, { new: true })
         .orFail(() => {
           throw new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA);
         })
-        .then((card) => res.send({ data: card }))
-      .catch((err) => {
-        if (err.message === 'NotFound') {
-          next(new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
-        }
-        if (err.name === 'ValidationError') {
-          next(new RequestError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
-        }
-        if (err.name === 'CastError') {
-          next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
-        } else {
-          next(err);
-        }
-      });
-    })
+        .then((newCard) => res.send({ data: newCard }))
+        .catch((err) => next(err))
+    .catch((err) => {
+      if (err.message === 'NotFound') {
+        next(new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
+      }
+      if (err.name === 'ValidationError') {
+        next(new RequestError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
+      }
+      if (err.name === 'CastError') {
+        next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
+      } else {
+        next(err);
+      }
+    });
+  });
 };
 
 module.exports.deleteLike = (req, res, next) => {
