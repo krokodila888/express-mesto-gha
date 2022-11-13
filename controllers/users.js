@@ -25,14 +25,13 @@ module.exports.getUser = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      // оставила тут эту проверку, потому что автотесты требуют в этом месте проверку на ошибку 400
       if (err.name === 'CastError') {
+        // оставила тут эту проверку, потому что автотесты требуют в этом месте проверку на ошибку 400
         next(new RequestError(ERROR_MESSAGE.USER_GET_ID));
       } else {
         next(err);
       }
-    })
-    .catch((err) => next(err));
+    });
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
@@ -69,7 +68,7 @@ module.exports.createUser = (req, res, next) => {
           }
         });
     })
-    .catch((err) => next(err));
+  .catch(next);
 };
 
 module.exports.editUserProfile = (req, res, next) => {
@@ -119,7 +118,7 @@ module.exports.login = (req, res, next) => {
           maxAge: 3600000,
           httpOnly: true,
         })
-        .send({ message: 'Вход выполнен' });
+        .send({ message: `${token}, ${user}` });
     })
     .catch(next);
 };
