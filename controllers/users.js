@@ -27,7 +27,7 @@ module.exports.getUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         // оставила тут эту проверку, потому что автотесты требовали проверку на ошибку 400
-        throw new RequestError(ERROR_MESSAGE.USER_GET_ID);
+        next(new RequestError(ERROR_MESSAGE.USER_GET_ID));
       } else {
         next(err);
       }
@@ -60,10 +60,10 @@ module.exports.createUser = (req, res, next) => {
         }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            throw new RequestError(ERROR_MESSAGE.USER_POST);
+            next(new RequestError(ERROR_MESSAGE.USER_POST));
           }
           if (err.code === 11000) {
-            throw new DoubleEmailError('Такой email уже существует.');
+            next(new DoubleEmailError('Такой email уже существует.'));
           } else {
             next(err);
           }
@@ -83,7 +83,7 @@ module.exports.editUserProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new RequestError(ERROR_MESSAGE.USER_PATCH_PROFILE_INV_DATA);
+        next(new RequestError(ERROR_MESSAGE.USER_PATCH_PROFILE_INV_DATA));
       } else {
         next(err);
       }
@@ -101,7 +101,7 @@ module.exports.editUserAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new RequestError(ERROR_MESSAGE.PATCH_AV_INV_DATA);
+        next(new RequestError(ERROR_MESSAGE.PATCH_AV_INV_DATA));
       } else {
         next(err);
       }
@@ -110,7 +110,6 @@ module.exports.editUserAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
