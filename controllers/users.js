@@ -27,7 +27,7 @@ module.exports.getUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         // оставила тут эту проверку, потому что автотесты требовали проверку на ошибку 400
-        next(new RequestError(ERROR_MESSAGE.USER_GET_ID));
+        throw new RequestError(ERROR_MESSAGE.USER_GET_ID);
       } else {
         next(err);
       }
@@ -60,10 +60,10 @@ module.exports.createUser = (req, res, next) => {
         }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            next(new RequestError(ERROR_MESSAGE.USER_POST));
+            throw new RequestError(ERROR_MESSAGE.USER_POST);
           }
           if (err.code === 11000) {
-            next(new DoubleEmailError('Такой email уже существует.'));
+            throw new DoubleEmailError('Такой email уже существует.');
           } else {
             next(err);
           }
@@ -77,13 +77,13 @@ module.exports.editUserProfile = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        next(new NotFoundError(ERROR_MESSAGE.USER_GET_ID));
+        throw new NotFoundError(ERROR_MESSAGE.USER_GET_ID);
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new RequestError(ERROR_MESSAGE.USER_PATCH_PROFILE_INV_DATA));
+        throw new RequestError(ERROR_MESSAGE.USER_PATCH_PROFILE_INV_DATA);
       } else {
         next(err);
       }
@@ -95,13 +95,13 @@ module.exports.editUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        next(new NotFoundError(ERROR_MESSAGE.USER_GET_ID));
+        throw new NotFoundError(ERROR_MESSAGE.USER_GET_ID);
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new RequestError(ERROR_MESSAGE.PATCH_AV_INV_DATA));
+        throw new RequestError(ERROR_MESSAGE.PATCH_AV_INV_DATA);
       } else {
         next(err);
       }
