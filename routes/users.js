@@ -1,8 +1,8 @@
 const usersRouter = require('express').Router();
 
-const { urlRegPattern } = require('../utils/utils');
-
 const { celebrate, Joi } = require('celebrate');
+
+const { urlRegPattern } = require('../utils/utils');
 
 const {
   getUsers, getUser, editUserProfile, editUserAvatar, getCurrentUser,

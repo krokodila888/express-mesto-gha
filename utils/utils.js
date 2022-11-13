@@ -18,6 +18,8 @@ const ERROR_MESSAGE = {
   CARD_DEL_WRONG_ID: 'Передан некорректный _id.',
 };
 
+const urlRegPattern = /^:?https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
+
 module.exports = {
   ERROR_CODE_WRONG_DATA,
   ERROR_CODE_NOT_FOUND,
@@ -27,5 +29,3 @@ module.exports = {
   RES_OK_CODE,
   urlRegPattern,
 };
-
-const urlRegPattern = /^:?https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
