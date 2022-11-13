@@ -25,7 +25,7 @@ module.exports.getUser = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-// оставила тут эту проверку, потому что автотесты требуют в этом месте проверку на ошибку 400
+      // оставила тут эту проверку, потому что автотесты требуют в этом месте проверку на ошибку 400
       if (err.name === 'CastError') {
         next(new RequestError(ERROR_MESSAGE.USER_GET_ID));
       } else {
