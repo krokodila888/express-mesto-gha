@@ -9,7 +9,7 @@ const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 // const AuthError = require('./errors/AuthError');
 const NotFoundError = require('./errors/NotFoundError');
-const { urlRegPattern } = require('../utils/utils');
+const { urlRegPattern } = require('./utils/utils');
 
 const { PORT = 3000 } = process.env;
 const app = express();
