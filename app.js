@@ -50,6 +50,10 @@ app.post('/signup', celebrate({
 
 app.use(auth);
 
+app.get('/signout', (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Выход' });
+});
+
 app.use(usersRouter);
 app.use(cardsRouter);
 app.use('*', () => {
