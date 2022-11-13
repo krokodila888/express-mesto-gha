@@ -39,6 +39,9 @@ module.exports.deleteCard = (req, res, next) => {
         .catch((err) => next(err));
     })
     .catch((err) => {
+      if (err.message === 'NotFound') {
+        next(new NotFoundError(ERROR_MESSAGE.CARD_DELETE_NO_ID));
+      }
       if (err.name === 'CastError') {
         next(new RequestError(ERROR_MESSAGE.CARD_DEL_WRONG_ID));
       } else {
@@ -63,6 +66,9 @@ module.exports.likeCard = (req, res, next) => {
         .catch((err) => next(err));
     })
     .catch((err) => {
+      if (err.message === 'NotFound') {
+        next(new NotFoundError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
+      }
       if (err.name === 'ValidationError') {
         next(new RequestError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
       }
@@ -85,6 +91,9 @@ module.exports.deleteLike = (req, res, next) => {
         .catch((err) => next(err));
     })
     .catch((err) => {
+      if (err.message === 'NotFound') {
+        next(new NotFoundError(ERROR_MESSAGE.DELETE_LIKE_NO_ID));
+      }
       if (err.name === 'ValidationError') {
         next(new RequestError(ERROR_MESSAGE.PUT_LIKE_INV_DATA));
       }

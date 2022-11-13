@@ -26,12 +26,16 @@ module.exports.getUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // оставила тут эту проверку, потому что автотесты требуют в этом месте проверку на ошибку 400
         next(new RequestError(ERROR_MESSAGE.USER_GET_ID));
+      }
+      // оставила тут эту проверку, потому что автотесты требуют в этом месте проверку на ошибку 400
+      if (err.message === 'NotFound') {
+        next(new NotFoundError(ERROR_MESSAGE.USER_GET_ID));
       } else {
         next(err);
       }
-    });
+    })
+    .catch((err) => next(err));
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
@@ -68,7 +72,7 @@ module.exports.createUser = (req, res, next) => {
           }
         });
     })
-  .catch(next);
+    .catch((err) => next(err));
 };
 
 module.exports.editUserProfile = (req, res, next) => {

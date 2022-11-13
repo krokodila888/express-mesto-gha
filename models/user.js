@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { isEmail, isURL } = require('validator/lib/isEmail');
+const isEmail = require('validator/lib/isEmail');
 const AuthError = require('../errors/AuthError');
 
 const userSchema = new mongoose.Schema({
@@ -33,17 +33,6 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: {
-      validator: (v) => isURL(
-        v,
-        {
-          protocols: ['http', 'https'],
-          require_tld: true,
-          require_protocol: true,
-        },
-      ),
-      message: 'Некорректный URL',
-    },
   },
 });
 
