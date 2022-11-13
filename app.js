@@ -59,11 +59,7 @@ app.use('*', () => {
 });
 
 app.use(errors());
-app.use((err, req, res, next) => {
-  // console.log(err);
-  res.status(500).send({ message: 'На сервере произошла ошибка.' });
-  next();
-});
+
 app.use(errorsHandler);
 
 app.listen(PORT, () => {
