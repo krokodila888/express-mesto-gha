@@ -9,6 +9,9 @@ const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 // const AuthError = require('./errors/AuthError');
 const NotFoundError = require('./errors/NotFoundError');
+const {
+  URL_PATTERN,
+} = require('./utils/utils');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -41,7 +44,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(/^:?https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/),
+    avatar: Joi.string().pattern(URL_PATTERN),
   }),
 }), createUser);
 
