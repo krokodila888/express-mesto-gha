@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-/* const {
-  URL_PATTERN,
-} = require('../utils/utils'); */
 
 const cardSchema = new mongoose.Schema({
   name: {
