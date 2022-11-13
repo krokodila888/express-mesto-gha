@@ -25,4 +25,7 @@ module.exports = {
   ERROR_CODE_DEFAULT,
   ERROR_MESSAGE,
   RES_OK_CODE,
+  urlRegPattern,
 };
+
+const urlRegPattern = /^:?https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;

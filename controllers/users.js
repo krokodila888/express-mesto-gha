@@ -29,9 +29,7 @@ module.exports.getUser = (req, res, next) => {
         next(new RequestError(ERROR_MESSAGE.USER_GET_ID));
       }
       // оставила тут эту проверку, потому что автотесты требуют в этом месте проверку на ошибку 400
-      if (err.message === 'NotFound') {
-        next(new NotFoundError(ERROR_MESSAGE.USER_GET_ID));
-      } else {
+      else {
         next(err);
       }
     })
@@ -122,7 +120,7 @@ module.exports.login = (req, res, next) => {
           maxAge: 3600000,
           httpOnly: true,
         })
-        .send({ message: `${token}, ${user}` });
+        .send({ message: 'Вход выполнен' });
     })
     .catch(next);
 };
