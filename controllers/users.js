@@ -36,7 +36,7 @@ module.exports.getUser = (req, res, next) => {
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
-  User.findById(req.user._id || req.params.userId)
+  User.findById(req.user._id)
     .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
     })
@@ -119,7 +119,7 @@ module.exports.login = (req, res, next) => {
           maxAge: 3600000,
           httpOnly: true,
         })
-        .send({ message: `${token}, ${user}` });
+        .send({ message: 'Вход выполнен' });
     })
     .catch(next);
 };
