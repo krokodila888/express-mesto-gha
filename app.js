@@ -1,11 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
 const helmet = require('helmet');
-const { createUser, login } = require('./controllers/users');
+const { createUser, login, logout } = require('./controllers/users');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const NotFoundError = require('./errors/NotFoundError');
@@ -14,14 +14,12 @@ const {
 } = require('./utils/utils');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000 } = process.env;
-const corsOptions = {
-  origin: '*',
-  credentials: true,
-  optionOkStatus: 200,
-};
+const { PORT = 3001 } = process.env;
+
 const app = express();
-app.use(cors(corsOptions));
+const { cors } = require('./middlewares/corsHandler');
+app.use(cors);
+
 app.use(cookieParser());
 app.use(helmet());
 app.use(bodyParser.json());
@@ -31,7 +29,6 @@ mongoose.connect(
   'mongodb://localhost:27017/mestodb',
   (err) => {
     if (err) throw err;
-    // console.log('connected to MongoDB');
   },
 );
 
@@ -39,7 +36,6 @@ const auth = require('./middlewares/auth');
 const errorsHandler = require('./middlewares/errorsHandler');
 
 app.use(requestLogger);
-
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
@@ -66,8 +62,11 @@ app.post('/signup', celebrate({
 app.use(auth);
 
 app.get('/signout', (req, res) => {
+  // console.log(cookie);
   res.clearCookie('jwt').send({ message: 'Выход' });
+  // console.log(cookie);
 });
+// app.get('/signout', logout);
 
 app.use(usersRouter);
 app.use(cardsRouter);
@@ -76,11 +75,8 @@ app.use('*', () => {
 });
 
 app.use(errorLogger);
-
 app.use(errors());
-
 app.use(errorsHandler);
-
 app.listen(PORT, () => {
   // console.log(`App listen to ${PORT} port`);
 });

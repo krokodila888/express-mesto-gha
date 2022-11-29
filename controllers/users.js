@@ -2,8 +2,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const NotFoundError = require('../errors/NotFoundError');
 const RequestError = require('../errors/RequestError');
-// const AuthError = require('../errors/AuthError');
 const DoubleEmailError = require('../errors/DoubleEmailError');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const User = require('../models/user');
 const {
@@ -60,10 +61,10 @@ module.exports.createUser = (req, res, next) => {
         }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            next(new RequestError(ERROR_MESSAGE.USER_POST));
+            throw new RequestError(ERROR_MESSAGE.USER_POST);
           }
           if (err.code === 11000) {
-            next(new DoubleEmailError('Такой email уже существует.'));
+            throw new DoubleEmailError('Такой email уже существует.');
           } else {
             next(err);
           }
@@ -112,13 +113,25 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'strong-secret',
+        { expiresIn: '7d' },
+      );
       res
         .cookie('jwt', token, {
           maxAge: 3600000,
           httpOnly: true,
+          sameSite: true,
+          secure: true,
         })
         .send({ message: 'Вход выполнен' });
+        // .send({ token });
     })
     .catch(next);
+};
+
+module.exports.logout = (req, res, next) => {
+  res.clearCookie('jwt').send({ message: 'Вы точно вышли из профиля' })
+  .catch(next);
 };
